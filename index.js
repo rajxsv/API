@@ -28,4 +28,4 @@ app.listen(port, () => {
   console.log("listening on ", port);
 });
 
-export default app
+
