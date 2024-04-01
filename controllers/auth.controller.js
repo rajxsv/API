@@ -20,11 +20,9 @@ const auth = async(req,res,next) => {
           res.status(401).json({message : "Forbidden"})
         }
       }else {
-        console.log('Somethings Off')
+        console.log('Somethings Off User is not valid !')
       }
-
     } catch (error) {
-      console.log(error)
       res.status(404).json({message : "Server error"})
   }
 }

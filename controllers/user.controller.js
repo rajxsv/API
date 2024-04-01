@@ -15,22 +15,21 @@ const registerUser = async (req, res) => {
 
   if (existinguser) {
     res.status(400).json({ message: "User already exist" });
-  }
+  } else {
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+    try {
+      await User.create({
+        username,
+        email,
+        password: hashedPassword,
+      });
 
-  try {
-    await User.create({
-      username,
-      email,
-      password: hashedPassword,
-    });
-
-    console.log("New User Added");
-    res.status(200).json({ message: "User created Successfully !" });
-  } catch (error) {
-    console.error(error);
-    res.status(400).json({ message: "There was some problem creating user" });
+      console.log("New User Added");
+      res.status(200).json({ message: "User created Successfully !" });
+    } catch (error) {
+      res.status(400).json({ message: "There was some problem creating user" });
+    }
   }
 };
 
@@ -74,7 +73,6 @@ const loginUser = async (req, res) => {
       message: "Your are Logged In !",
     });
   } catch (error) {
-    console.error(error);
     res.status(400).json({ message: "Internal Server Error" });
   }
 };
