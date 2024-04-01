@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import argon2 from "argon2"
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 // import {DislikeApiService} from "neurelo-sdk"
@@ -16,7 +16,7 @@ const registerUser = async (req, res) => {
   if (existinguser) {
     res.status(400).json({ message: "User already exist" });
   } else {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await argon2.hash(password, 10);
 
     try {
       await User.create({
@@ -43,7 +43,7 @@ const loginUser = async (req, res) => {
     }
 
     const userHashedPassword = existinguser.password;
-    const isValid = bcrypt.compare(password, userHashedPassword);
+    const isValid = argon2.verify(userHashedPassword,password);
 
     if (!isValid) {
       res.status(400).json({ message: "Please recheck your password" });
