@@ -36,7 +36,6 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-    console.log(req.body);
     const { email, password } = req.body;
     const existinguser = await User.findOne({ email }).lean();
 
@@ -69,8 +68,6 @@ const loginUser = async (req, res) => {
       httpOnly: true,
     });
 
-    console.log(res);
-
     res.status(200).json({
       token,
       user,
@@ -100,7 +97,7 @@ const getUserProblems = async (req, res) => {
     res.status(200).json(user.problems);
   } catch (error) {
     console.log(error);
-    res.status(404).json({ message: "Error in backend" });
+    res.status(500).json({ message: "Error in backend" });
   }
 };
 
@@ -169,7 +166,7 @@ const likeUserPost = async (req, res) => {
   try {
     const userId = req.user._id;
     const { postId } = req.query;
-    console.log(userId,postId)
+    console.log(userId, postId);
 
     // const dislikeResponse = await DislikeApiService.findDislike(undefined, { user: userId, post: postId });
     // const isDisliked = dislikeResponse.data?.data[0]
