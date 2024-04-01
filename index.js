@@ -14,8 +14,7 @@ await connect();
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true,
+    origin: process.env.CORS_ORIGIN | "*",
   })
 );
 app.use(cookieParser());
@@ -27,5 +26,3 @@ app.use("/", userRouter);
 app.listen(port, () => {
   console.log("listening on ", port);
 });
-
-
