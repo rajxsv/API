@@ -1,4 +1,4 @@
-import argon2 from "argon2"
+import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 // import {DislikeApiService} from "neurelo-sdk"
@@ -40,38 +40,37 @@ const loginUser = async (req, res) => {
 
     if (!existinguser) {
       res.status(400).json({ message: "User does not exist" });
+    } else {
+      const userHashedPassword = existinguser.password;
+      const isValid = argon2.verify(userHashedPassword, password);
+
+      if (!isValid) {
+        res.status(400).json({ message: "Please recheck your password" });
+      } else {
+        const token = jwt.sign(
+          {
+            id: existinguser._id,
+          },
+          process.env.SECRET_KEY
+        );
+        const user = await User.findOne({ email }).select("-password");
+
+        console.log("Logging in User");
+
+        res.clearCookie(String(existinguser._id));
+
+        res.cookie(String(existinguser._id), token, {
+          path: "/",
+          httpOnly: true,
+        });
+
+        res.status(200).json({
+          token,
+          user,
+          message: "Your are Logged In !",
+        });
+      }
     }
-
-    const userHashedPassword = existinguser.password;
-    const isValid = argon2.verify(userHashedPassword,password);
-
-    if (!isValid) {
-      res.status(400).json({ message: "Please recheck your password" });
-      return;
-    }
-
-    const token = jwt.sign(
-      {
-        id: existinguser._id,
-      },
-      process.env.SECRET_KEY
-    );
-    const user = await User.findOne({ email }).select("-password");
-
-    console.log("Logging in User");
-
-    res.clearCookie(String(existinguser._id));
-
-    res.cookie(String(existinguser._id), token, {
-      path: "/",
-      httpOnly: true,
-    });
-
-    res.status(200).json({
-      token,
-      user,
-      message: "Your are Logged In !",
-    });
   } catch (error) {
     res.status(400).json({ message: "Internal Server Error" });
   }
